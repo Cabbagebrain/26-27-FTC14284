@@ -6,8 +6,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class MecanumDrivetrain {
     private Gamepad gamepad1;
+    private double denominator;
     private DcMotorEx frontLeft;
     private DcMotorEx frontRight;
     private DcMotorEx backLeft;
@@ -18,10 +21,10 @@ public class MecanumDrivetrain {
     private double brPower;
     public MecanumDrivetrain(HardwareMap hardwareMap) {
         //retrieve motors from hardware map
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontleft"); //port 0
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontright"); //port 1
-        backLeft = hardwareMap.get(DcMotorEx.class, "backleft"); //port 2
-        backRight = hardwareMap.get(DcMotorEx.class, "backright"); //port 3
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); //port 0
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); //port 1
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft"); //port 2
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight"); //port 3
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -37,13 +40,20 @@ public class MecanumDrivetrain {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void setPower(IMU imu, double x, double y, double rx) {
-        double rotX = x;
-        double rotY = -y;
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        flPower = (rotY - rotX + rx) / denominator;
-        blPower = (rotY + rotX + rx) / denominator;
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        flPower = (rotY + rotX + rx) / denominator;
+        blPower = (rotY - rotX + rx) / denominator;
         frPower = (rotY - rotX - rx) / denominator;
         brPower = (rotY + rotX - rx) / denominator;
     }
