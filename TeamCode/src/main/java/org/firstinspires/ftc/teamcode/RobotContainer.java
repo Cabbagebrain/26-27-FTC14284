@@ -40,6 +40,10 @@ public class RobotContainer extends LinearOpMode {
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
+            if(gamepad1.dpad_down){
+                imu.resetYaw();
+            }
+
             drivetrain.setPower(imu, x, y, rx);
             if (gamepad1.left_bumper) {
                 drivetrain.slowDrive();
