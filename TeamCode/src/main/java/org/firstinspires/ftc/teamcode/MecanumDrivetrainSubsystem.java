@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class MecanumDrivetrain {
+public class MecanumDrivetrainSubsystem extends SubsystemBase {
     private Gamepad gamepad1;
     private DcMotorEx frontLeft;
     private DcMotorEx frontRight;
@@ -19,7 +19,7 @@ public class MecanumDrivetrain {
     private double frPower;
     private double blPower;
     private double brPower;
-    public MecanumDrivetrain(HardwareMap hardwareMap) {
+    public MecanumDrivetrainSubsystem(HardwareMap hardwareMap) {
         //retrieve motors from hardware map
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); //port 0
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); //port 1
