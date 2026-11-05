@@ -12,7 +12,7 @@ public class StopShooting extends SequentialCommandGroup {
         this.intake = intake;
         addCommands(
                 new InstantCommand(() -> shooter.stopShooter()),
-                new InstantCommand(() -> intake.stopIntake()),
+                new InstantCommand(() -> intake.stopFeed()),
                 new InstantCommand(() -> intake.stopLoad())
         );
         addRequirements(shooter);
