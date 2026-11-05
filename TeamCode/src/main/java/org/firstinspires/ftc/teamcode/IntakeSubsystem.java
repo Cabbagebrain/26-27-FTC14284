@@ -16,15 +16,13 @@ public class IntakeSubsystem extends SubsystemBase {
     private double gate_pos;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
-        intake = hardwareMap.get(DcMotor.class, "intake"); //port 0
-        feed = hardwareMap.get(DcMotor.class, "feed"); //port 1
-        loader = hardwareMap.get(DcMotor.class, "loader"); //port 2
-        gate = hardwareMap.get(ServoEx.class,"Name");
+        intake = hardwareMap.get(DcMotor.class, "intake"); //port 3 expansion
+        feed = hardwareMap.get(DcMotor.class, "feed"); //port 0 expansion
+        loader = hardwareMap.get(DcMotor.class, "loader"); //port 0 control
 
         feed.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        gate_pos = gate.getRawPosition();
     }
 
     public void runIntake(double power) {
@@ -43,15 +41,5 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void stopLoad() {
         loader.setPower(0);
-    }
-
-    public void openGate()
-    {
-        gate.set(gate_pos + 0.1);
-    }
-
-    public void closeGate()
-    {
-        gate.set(gate_pos);
     }
 }

@@ -21,10 +21,10 @@ public class MecanumDrivetrainSubsystem extends SubsystemBase {
     private double brPower;
     public MecanumDrivetrainSubsystem(HardwareMap hardwareMap) {
         //retrieve motors from hardware map
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); //port 0
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); //port 1
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft"); //port 2
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight"); //port 3
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); //port 2 expansion
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); //port 1 control
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft"); //port 1 expansion
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight"); //port 2 control
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);

@@ -3,29 +3,37 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 public class ShooterSubsystem extends SubsystemBase{
 
-    private DcMotor shooterLeft;
-    private DcMotor shooterRight;
+    private DcMotor shooter;
+    private Servo gate;
+    private double gate_pos;
     public ShooterSubsystem(HardwareMap hardwareMap) {
-        shooterLeft = hardwareMap.get(DcMotor.class, "shooterLeft"); //port 2
-        shooterRight = hardwareMap.get(DcMotor.class, "shooterRight"); //port 3
-
-        shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        shooterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter = hardwareMap.get(DcMotor.class, "shooter"); //port 3 control
+        gate = hardwareMap.get(Servo.class,"servoGate"); //port 0 expansion
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        gate_pos = gate.getPosition();
     }
 
     public void shoot_power(double power) {
-        shooterLeft.setPower(power);
-        shooterRight.setPower(power);
+       shooter.setPower(power);
     }
 
     public void stopShooter(){
-        shooterRight.setPower(0);
-        shooterLeft.setPower(0);
+        shooter.setPower(0);
+    }
+
+    public void openGate()
+    {
+        gate.setPosition(gate_pos + 0.1);
+    }
+
+    public void closeGate()
+    {
+        gate.setPosition(gate_pos);
     }
 }
