@@ -10,27 +10,12 @@ public class Shoot extends SequentialCommandGroup {
         this.shooter = shooter;
         this.intake = intake;
         addCommands(
-                new InstantCommand(() -> shooter.runShooter(0.8)),
-                new InstantCommand(() -> intake.runFeed(1)),
-                new InstantCommand(() -> intake.startLoad(1))
+                new InstantCommand(() -> shooter.openGate()),
+                new InstantCommand(() -> intake.startLoad(.5))
         );
         addRequirements(shooter);
         addRequirements(intake);
     }
-
-    /*
-    @Override
-    //runs when command is scheduled
-    public  void initialize() {
-        
-    }
-
-    @Override
-    //runs when command is called
-    public void execute () {
-
-    }
-    */
 
     @Override
     //must be overridden or command will not end

@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void runFeedIntake(double power) {
-        feed.setPower(power);
+        feed.setPower(power/2);
         intake.setPower(power);
     }
 

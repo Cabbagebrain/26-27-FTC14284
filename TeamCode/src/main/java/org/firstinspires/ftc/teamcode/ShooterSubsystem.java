@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -13,6 +14,7 @@ public class ShooterSubsystem extends SubsystemBase{
         shooter = hardwareMap.get(DcMotor.class, "shooter"); //port 3 control
         gate = hardwareMap.get(Servo.class,"servoGate"); //port 0 expansion
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void runShooter(double power) {
@@ -25,11 +27,11 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public void openGate()
     {
-        gate.setPosition(0.153);
+        gate.setPosition(0.83);
     }
 
     public void closeGate()
     {
-        gate.setPosition(.4);
+        gate.setPosition(0.28);
     }
 }

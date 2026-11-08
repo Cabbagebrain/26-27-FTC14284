@@ -45,18 +45,24 @@ public class RobotContainer extends LinearOpMode {
         Button left_bumper = new GamepadButton(driverOP, GamepadKeys.Button.LEFT_BUMPER);
         Button right_bumper = new GamepadButton(driverOP, GamepadKeys.Button.RIGHT_BUMPER);
         Button b_button = new GamepadButton(driverOP, GamepadKeys.Button.B);
+        Button x_button = new GamepadButton(driverOP, GamepadKeys.Button.X);
 
         //bind command to buttons
-        left_bumper.whenPressed(new Shoot(shooter, intake))
-                   .whenReleased(new StopShooting(shooter, intake));
+        left_bumper.toggleWhenPressed(
+                new InstantCommand(() -> shooter.runShooter(.95)),
+                new InstantCommand(shooter::stopShooter)
+        );
 
-        b_button.whenPressed(new InstantCommand(shooter::openGate))
-                .whenReleased(new InstantCommand(shooter::closeGate));
+        b_button.whenPressed(new Shoot(shooter, intake))
+                .whenReleased(new StopShoot(shooter, intake));
 
         right_bumper.toggleWhenPressed(
                 new InstantCommand(() -> intake.runFeedIntake(0.8)),
-                new InstantCommand(intake::stopFeedIntake, intake)
+                new InstantCommand(intake::stopFeedIntake)
         );
+
+        x_button.whenPressed(new InstantCommand(() -> intake.runFeed(-1)))
+                .whenReleased(new InstantCommand(intake::stopFeed));
 
         ElapsedTime runtime = new ElapsedTime();
         waitForStart();
