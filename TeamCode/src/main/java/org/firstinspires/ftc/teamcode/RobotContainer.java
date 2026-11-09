@@ -6,6 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.button.Button;
+import com.seattlesolvers.solverslib.command.button.GamepadButton;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @TeleOp
 public class RobotContainer extends LinearOpMode {
@@ -16,7 +24,7 @@ public class RobotContainer extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Retrieve the IMU from the hardware map
+        GamepadEx driverOP = new GamepadEx(gamepad1);        // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
@@ -30,7 +38,33 @@ public class RobotContainer extends LinearOpMode {
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.start(); // This tells Limelight to start looking!
 
-        MecanumDrivetrain drivetrain = new MecanumDrivetrain(hardwareMap);
+        //init subsystems
+        MecanumDrivetrainSubsystem drivetrain = new MecanumDrivetrainSubsystem(hardwareMap);
+        ShooterSubsystem shooter = new ShooterSubsystem(hardwareMap);
+        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
+
+        //init buttons
+        Button left_bumper = new GamepadButton(driverOP, GamepadKeys.Button.LEFT_BUMPER);
+        Button right_bumper = new GamepadButton(driverOP, GamepadKeys.Button.RIGHT_BUMPER);
+        Button b_button = new GamepadButton(driverOP, GamepadKeys.Button.B);
+        Button x_button = new GamepadButton(driverOP, GamepadKeys.Button.X);
+
+        //bind command to buttons
+        left_bumper.toggleWhenPressed(
+                new InstantCommand(() -> shooter.runShooter(.95)),
+                new InstantCommand(shooter::stopShooter)
+        );
+
+        b_button.whenPressed(new Shoot(shooter, intake))
+                .whenReleased(new StopShoot(shooter, intake));
+
+        right_bumper.toggleWhenPressed(
+                new InstantCommand(() -> intake.runFeedIntake(0.8)),
+                new InstantCommand(intake::stopFeedIntake)
+        );
+
+        x_button.whenPressed(new InstantCommand(() -> intake.runFeed(-1)))
+                .whenReleased(new InstantCommand(intake::stopFeed));
 
         ElapsedTime runtime = new ElapsedTime();
         waitForStart();
@@ -40,12 +74,24 @@ public class RobotContainer extends LinearOpMode {
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
 
+            CommandScheduler.getInstance().run();
+
+            if(driverOP.getButton(GamepadKeys.Button.DPAD_DOWN)){
+                imu.resetYaw();
+            }
+
             drivetrain.setPower(imu, x, y, rx);
-            if (gamepad1.left_bumper) {
+            if (driverOP.getButton(GamepadKeys.Button.DPAD_LEFT)) {
                 drivetrain.slowDrive();
             } else {
                 drivetrain.drive();
             }
+
+            telemetry.addData("Flywheel Draw (V)", shooter.getShooter().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.addData("Intake Draw (V)", intake.getIntake().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.addData("Feed Draw (V)", intake.getFeed().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.addData("Loader Draw (V)", intake.getLoader().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.update();
         }
     }
 }

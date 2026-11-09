@@ -5,12 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-
+import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class MecanumDrivetrain {
+public class MecanumDrivetrainSubsystem extends SubsystemBase {
     private Gamepad gamepad1;
-    private double denominator;
     private DcMotorEx frontLeft;
     private DcMotorEx frontRight;
     private DcMotorEx backLeft;
@@ -19,12 +18,12 @@ public class MecanumDrivetrain {
     private double frPower;
     private double blPower;
     private double brPower;
-    public MecanumDrivetrain(HardwareMap hardwareMap) {
+    public MecanumDrivetrainSubsystem(HardwareMap hardwareMap) {
         //retrieve motors from hardware map
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); //port 0
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); //port 1
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft"); //port 2
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight"); //port 3
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft"); //port 2 expansion
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight"); //port 1 control
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft"); //port 1 expansion
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight"); //port 2 control
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -51,7 +50,7 @@ public class MecanumDrivetrain {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
         flPower = (rotY + rotX + rx) / denominator;
         blPower = (rotY - rotX + rx) / denominator;
         frPower = (rotY - rotX - rx) / denominator;

@@ -27,14 +27,14 @@ android {
 repositories {
     maven {
         url = 'https://maven.brott.dev/'
+        url "https://repo.dairy.foundation/releases"
     }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation "com.acmerobotics.roadrunner:ftc:0.1.25"
-    implementation "com.acmerobotics.roadrunner:core:1.0.1"
-    implementation "com.acmerobotics.roadrunner:actions:1.0.1"
-    implementation "com.acmerobotics.dashboard:dashboard:0.5.1"
+
+    implementation "org.solverslib:core:0.3.6" // core
+    implementation "org.solverslib:pedroPathing:0.3.6" // pedroPathing
 }
 
