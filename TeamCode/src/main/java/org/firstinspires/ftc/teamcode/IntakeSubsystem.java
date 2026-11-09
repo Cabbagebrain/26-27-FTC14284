@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,17 +10,17 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 public class IntakeSubsystem extends SubsystemBase {
-    private DcMotor intake;
-    private DcMotor feed;
-    private DcMotor loader;
+    private DcMotorEx intake;
+    private DcMotorEx feed;
+    private DcMotorEx loader;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
-        intake = hardwareMap.get(DcMotor.class, "intake"); //port 3 expansion
-        feed = hardwareMap.get(DcMotor.class, "feed"); //port 0 expansion
-        loader = hardwareMap.get(DcMotor.class, "loader"); //port 0 control
+        intake = hardwareMap.get(DcMotorEx.class, "intake"); //port 3 expansion
+        feed = hardwareMap.get(DcMotorEx.class, "feed"); //port 0 expansion
+        loader = hardwareMap.get(DcMotorEx.class, "loader"); //port 0 control
 
-        feed.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        feed.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
@@ -55,5 +56,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void stopLoad() {
         loader.setPower(0);
+    }
+
+    public DcMotorEx getIntake() {
+        return intake;
+    }
+
+    public DcMotorEx getFeed() {
+        return feed;
+    }
+    public DcMotorEx getLoader() {
+        return loader;
     }
 }

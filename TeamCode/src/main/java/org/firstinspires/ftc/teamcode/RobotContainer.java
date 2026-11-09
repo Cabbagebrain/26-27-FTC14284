@@ -13,6 +13,8 @@ import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 @TeleOp
 public class RobotContainer extends LinearOpMode {
     private IMU imu;
@@ -84,6 +86,12 @@ public class RobotContainer extends LinearOpMode {
             } else {
                 drivetrain.drive();
             }
+
+            telemetry.addData("Flywheel Draw (V)", shooter.getShooter().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.addData("Intake Draw (V)", intake.getIntake().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.addData("Feed Draw (V)", intake.getFeed().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.addData("Loader Draw (V)", intake.getLoader().getCurrent(CurrentUnit.AMPS)*1.3);
+            telemetry.update();
         }
     }
 }
