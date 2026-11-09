@@ -12,8 +12,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private DcMotor intake;
     private DcMotor feed;
     private DcMotor loader;
-    private ServoEx gate;
-    private double gate_pos;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake"); //port 3 expansion
@@ -25,13 +23,29 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void runFeedIntake(double power) {
+        feed.setPower(power/2);
+        intake.setPower(power);
+    }
+
+    public void stopFeedIntake() {
+        feed.setPower(0);
+        intake.setPower(0);
+    }
+
     public void runIntake(double power) {
         intake.setPower(power);
-        feed.setPower(power);
     }
 
     public void stopIntake() {
         intake.setPower(0);
+    }
+
+    public void runFeed(double power) {
+        feed.setPower(power);
+    }
+
+    public void stopFeed() {
         feed.setPower(0);
     }
 

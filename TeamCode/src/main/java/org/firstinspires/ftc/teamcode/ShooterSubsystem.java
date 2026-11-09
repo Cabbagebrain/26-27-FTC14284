@@ -5,21 +5,19 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 public class ShooterSubsystem extends SubsystemBase{
 
     private DcMotor shooter;
     private Servo gate;
-    private double gate_pos;
     public ShooterSubsystem(HardwareMap hardwareMap) {
         shooter = hardwareMap.get(DcMotor.class, "shooter"); //port 3 control
         gate = hardwareMap.get(Servo.class,"servoGate"); //port 0 expansion
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        gate_pos = gate.getPosition();
+        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void shoot_power(double power) {
+    public void runShooter(double power) {
        shooter.setPower(power);
     }
 
@@ -29,11 +27,11 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public void openGate()
     {
-        gate.setPosition(gate_pos + 0.1);
+        gate.setPosition(0.83);
     }
 
     public void closeGate()
     {
-        gate.setPosition(gate_pos);
+        gate.setPosition(0.28);
     }
 }

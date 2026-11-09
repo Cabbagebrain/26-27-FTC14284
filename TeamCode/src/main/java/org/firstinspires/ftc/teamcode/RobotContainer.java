@@ -6,10 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -38,33 +36,33 @@ public class RobotContainer extends LinearOpMode {
         limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
         limelight.start(); // This tells Limelight to start looking!
 
+        //init subsystems
         MecanumDrivetrainSubsystem drivetrain = new MecanumDrivetrainSubsystem(hardwareMap);
         ShooterSubsystem shooter = new ShooterSubsystem(hardwareMap);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
-        Command shootCommand = new SequentialCommandGroup(new InstantCommand(() -> shooter.shoot_power(0.8))
-                                                        , new InstantCommand(() -> intake.runIntake(1))
-                                                        , new InstantCommand(() -> intake.startLoad(1)));
-                                                        //, new InstantCommand(() -> intake.openGate()));
-
-        Command stopShoot = new SequentialCommandGroup(new InstantCommand(() -> shooter.shoot_power(0))
-                , new InstantCommand(() -> intake.runIntake(0))
-                , new InstantCommand(() -> intake.startLoad(0)));
-                //, new InstantCommand(() -> intake.closeGate()));
-
+        //init buttons
         Button left_bumper = new GamepadButton(driverOP, GamepadKeys.Button.LEFT_BUMPER);
         Button right_bumper = new GamepadButton(driverOP, GamepadKeys.Button.RIGHT_BUMPER);
         Button b_button = new GamepadButton(driverOP, GamepadKeys.Button.B);
+        Button x_button = new GamepadButton(driverOP, GamepadKeys.Button.X);
 
-        left_bumper.whenPressed(shootCommand)
-                .whenReleased(stopShoot);
+        //bind command to buttons
+        left_bumper.toggleWhenPressed(
+                new InstantCommand(() -> shooter.runShooter(.95)),
+                new InstantCommand(shooter::stopShooter)
+        );
 
-        b_button.whenPressed(new InstantCommand(() -> shooter.openGate()))
-                .whenReleased(new InstantCommand(() -> shooter.closeGate()));
+        b_button.whenPressed(new Shoot(shooter, intake))
+                .whenReleased(new StopShoot(shooter, intake));
 
         right_bumper.toggleWhenPressed(
-                new InstantCommand(() -> {intake.runIntake(0.8);}),
-                new InstantCommand(intake::stopIntake, intake));
+                new InstantCommand(() -> intake.runFeedIntake(0.8)),
+                new InstantCommand(intake::stopFeedIntake)
+        );
+
+        x_button.whenPressed(new InstantCommand(() -> intake.runFeed(-1)))
+                .whenReleased(new InstantCommand(intake::stopFeed));
 
         ElapsedTime runtime = new ElapsedTime();
         waitForStart();
@@ -75,14 +73,6 @@ public class RobotContainer extends LinearOpMode {
             rx = gamepad1.right_stick_x;
 
             CommandScheduler.getInstance().run();
-
-            /*if(driverOP.a)
-            {
-                intake.startLoad(1);
-            }
-            else{
-                intake.stopLoad();
-            }*/
 
             if(driverOP.getButton(GamepadKeys.Button.DPAD_DOWN)){
                 imu.resetYaw();
